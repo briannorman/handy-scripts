@@ -1,0 +1,9 @@
+1. Go to google.com and click the sign in button in the top right corner of the page. If you are already signed in, either log out or open an icognito tab and then click the sign in button.
+
+2. Click the create account link below the sign in box.
+
+3. Fill out the first and last name fields.  Under username, click the link that reads 'Use my current email address instead'.
+
+4. Enter your corporate email address.
+
+5. Fill out the rest of the form and you should be set.
