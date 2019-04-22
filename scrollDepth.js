@@ -1,46 +1,56 @@
-/* GA Scroll Depth */
 var body = document.body,
     html = document.documentElement,
-    windowHeight = $(window).height(),
-    fullPageHeight = Math.max( body.scrollHeight, body.offsetHeight,
-                               html.clientHeight, html.scrollHeight, html.offsetHeight),
+    windowHeight = window.innerHeight,
+    fullPageHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight),
     scrollableHeight = fullPageHeight - windowHeight,
-    quarterScrolledPos = Math.round(scrollableHeight * .25),
-    halfScrolledPos = Math.round(scrollableHeight * .5),
-    threeQuarterScrolledPos = Math.round(scrollableHeight * .75),
-    quarterScrollSentToGA = false,
-    halfScrollSentToGA = false,
-    threeQuarterScrollSentToGA = false,
-    fullScrollSentToGA = false;
+    heightEvents = [
+        {
+            position: Math.round(scrollableHeight * 0.25),
+            scrollPercent: '25',
+        },
+        {
+            position: Math.round(scrollableHeight * 0.5),
+            scrollPercent: '50',
+        },
+        {
+            position: Math.round(scrollableHeight * 0.75),
+            scrollPercent: '75',
+        },
+        {
+            position: Math.round(scrollableHeight * 0.9),
+            scrollPercent: '90',
+        },
+        {
+            position: scrollableHeight,
+            scrollPercent: '100',
+        }
+    ];
+
 function checkScrollDepth() {
-  var scrollPos = $(document).scrollTop();
-  if (scrollPos >= quarterScrolledPos) {
-    if (!quarterScrollSentToGA) {
-      sendScrollDepthToGa('25%');
-      quarterScrollSentToGA = true;
+    var scrollPos = window.scrollY;
+
+    // There's some trickery here, because we want to remove elements and that'll cause the
+    // array to reindex as we iterate. We'd either have to adjust `i` each iteration or
+    // we can just loop backwards. I prefer the latter.
+    for (var i = heightEvents.length - 1; i >= 0; i--) {
+        var thisEvent = heightEvents[i];
+
+        if (scrollPos >= thisEvent.position) {
+            dataLayer.push({
+                'event': 'scroll_depth',
+                'eventCategory': 'Scroll Depth',
+                'eventAction': 'Scroll Down',
+                'eventLabel': thisEvent.scrollPercent
+            });
+
+            heightEvents.splice(i, 1); // Remove once we've fired the event so it doesn't fire next time.
+        }
     }
-  }
-  if (scrollPos >= halfScrolledPos) {
-    if (!halfScrollSentToGA) {
-      sendScrollDepthToGa('50%');
-      halfScrollSentToGA = true;
+
+    // Once we're out of heightEvents we can stop listening.
+    if (!heightEvents.length) {
+        window.removeEventListener('scroll', checkScrollDepth);
     }
-  }
-  if (scrollPos >= threeQuarterScrolledPos) {
-    if (!threeQuarterScrollSentToGA) {
-      sendScrollDepthToGa('75%');
-      threeQuarterScrollSentToGA = true;
-    }
-  }
-  if (scrollPos === scrollableHeight) {
-    if (!fullScrollSentToGA) {
-      sendScrollDepthToGa('100%');
-      fullScrollSentToGA = true;
-    }
-  }
 }
-function sendScrollDepthToGa(scrollHeight) {
-  ga('send', 'event', 'Scroll Depth', 'scroll' + scrollHeight, urlPath);
-}
-$(window).on('scroll', checkScrollDepth);
-/* END GA Scroll Depth */
+
+window.addEventListener('scroll', checkScrollDepth);
