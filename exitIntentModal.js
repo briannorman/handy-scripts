@@ -105,10 +105,10 @@ function handleExitIntent(e) {
     document.cookie = COOKIE_NAME + '=true';
 
     // remove our event listener so the exit intent modal is only shown once
-    document.removeEventListener('mouseleave', handleExitIntent);
+    document.removeEventListener('mouseout', handleExitIntent);
   }
 }
 
 if (!getCookieValueByCookieName(COOKIE_NAME)) {
-  document.addEventListener('mouseleave', handleExitIntent);
+  document.addEventListener('mouseout', handleExitIntent);
 }
