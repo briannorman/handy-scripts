@@ -4,9 +4,9 @@
 
   window.addEventListener('blur', function (e) {
     if (document.activeElement == paypalIframe) {
-      console.log('paypal iframe was clicked');
-    } else {
-      console.log('paypal iframe was NOT clicked');
+		window.dataLayer.push({
+			'event': 'paypal_iframe_button_clicked'
+		  });
     }
   });
 })();
