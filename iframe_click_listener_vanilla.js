@@ -1,23 +1,12 @@
+;(function pollForPaypalButton() {
+  var paypalIframe = document.querySelector('iframe[title="Checkout with PayPal"]');
+  if (!paypalIframe) return setTimeout(pollForPaypalButton, 0);
 
-var hovering = false;
-var paypalIframe = document.querySelector('iframe[title="Checkout with PayPal"]');
-
-paypalIframe.addEventListener('mouseover', function () {
-  hovering = true;
-});
-
-paypalIframe.addEventListener('mouseout', function () {
-  hovering = false;
-});
-
-window.addEventListener('blur', function () {
-  if (hovering) {
-    window.dataLayer.push({
-      'event': 'paypal_iframe_button_clicked'
-    });
-
-    setTimeout(function() {
-      window.focus();
-    }, 0);
-  }
-});
+  window.addEventListener('blur', function (e) {
+    if (document.activeElement == paypalIframe) {
+      console.log('paypal iframe was clicked');
+    } else {
+      console.log('paypal iframe was NOT clicked');
+    }
+  });
+})();
